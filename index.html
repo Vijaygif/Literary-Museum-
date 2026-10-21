@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Poets Gallery — Where Words Become Immortal</title>
+<meta name="description" content="A digital museum of famous poets from India and around the world.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ===== 2. TOKENS ===== */
+:root{--bg:#f6efe0;--bg2:#ede3cc;--ink:#1c1b33;--mute:#5d5a74;--card:#fffaf0;--line:rgba(28,27,51,.14);--acc:#4a3d9c;--acc2:#e6defa;--gold:#a8832f;--shadow:0 10px 30px rgba(40,30,80,.12);
+--serif:"Cormorant Garamond",Georgia,serif;--sans:"DM Sans",system-ui,sans-serif;--r:18px}
+[data-theme=dark]{--bg:#0e1124;--bg2:#161a36;--ink:#efe9d8;--mute:#b0adc8;--card:#171b38;--line:rgba(239,233,216,.16);--acc:#a99bff;--acc2:#2a2656;--gold:#d3ad5a;--shadow:0 10px 30px rgba(0,0,0,.45)}
+/* ===== 3. GLOBAL ===== */
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{font:400 1rem/1.7 var(--sans);background:var(--bg);color:var(--ink);overflow-x:hidden;transition:background .4s,color .4s}
+h1,h2,h3{font-family:var(--serif);line-height:1.1;font-weight:700}
+h2{font-size:clamp(2rem,5vw,3.2rem)}
+a{color:inherit}
+img{max-width:100%;display:block}
+:focus-visible{outline:3px solid var(--acc);outline-offset:3px;border-radius:6px}
+.wrap{width:min(1180px,100% - 2.5rem);margin:auto}
+section{padding:clamp(3.5rem,9vw,6.5rem) 0}
+.btn{font:700 .95rem var(--sans);min-height:46px;padding:.7rem 1.4rem;border-radius:99px;border:1.5px solid var(--acc);background:var(--acc);color:#fff;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:.5rem;transition:transform .25s,box-shadow .25s,background .25s}
+[data-theme=dark] .btn{color:#14122b}
+.btn.ghost{background:transparent;color:var(--acc)}
+.btn:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.btn .ar{transition:transform .25s}.btn:hover .ar{transform:translateX(4px)}
+.rule{height:1px;border:0;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:1rem auto 2rem;width:min(320px,70%)}
+.rv{opacity:0;transform:translateY(22px);transition:opacity .8s,transform .8s}.rv.in{opacity:1;transform:none}
+/* ===== 4. NAV + HERO ===== */
+header.nav{position:fixed;inset:0 0 auto;z-index:50;transition:background .3s,box-shadow .3s}
+header.nav.solid{background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(10px);box-shadow:0 1px 0 var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;min-height:64px;gap:1rem}
+.logo{font:700 1.4rem var(--serif);text-decoration:none;display:flex;align-items:center;gap:.5rem}
+.logo svg{width:28px;height:28px;stroke:var(--gold);fill:none;stroke-width:1.6;animation:pen 2s ease-out both}
+@keyframes pen{from{stroke-dasharray:90;stroke-dashoffset:90}to{stroke-dasharray:90;stroke-dashoffset:0}}
+.links{display:flex;gap:1.4rem;align-items:center}
+.links a{text-decoration:none;font-weight:500;position:relative;padding:.3rem 0}
+.links a:not(.btn)::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:100%;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .3s}
+.links a:hover::after,.links a[aria-current]::after{transform:scaleX(1)}
+.ico{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;font-size:1.1rem}
+#menuBtn{display:none}
+.hero{min-height:100svh;display:grid;align-items:center;position:relative;overflow:hidden;padding:7rem 0 5rem;background:radial-gradient(900px 500px at 80% 10%,var(--acc2),transparent 70%),radial-gradient(700px 500px at 0% 100%,color-mix(in srgb,var(--gold) 22%,transparent),transparent 70%),var(--bg)}
+.hero .orb{position:absolute;border-radius:50%;filter:blur(2px);pointer-events:none}
+.o1{width:360px;height:360px;right:-90px;top:12%;border:1px solid var(--gold);opacity:.5}
+.o2{width:180px;height:180px;right:8%;top:42%;border:1px solid var(--acc);opacity:.35}
+.hero .bigq{position:absolute;left:-1.5rem;top:4rem;font:700 min(46vw,34rem)/1 var(--serif);color:var(--acc);opacity:.07;pointer-events:none;user-select:none}
+.hero h1{font-size:clamp(2.8rem,9vw,6.6rem);max-width:12ch}
+.hero h1 span{display:block;opacity:0;transform:translateY(28px);animation:up .9s cubic-bezier(.2,.7,.2,1) forwards}
+.hero h1 span:nth-child(2){animation-delay:.15s;font-style:italic;color:var(--acc);background:linear-gradient(90deg,var(--acc),var(--gold),var(--acc));background-size:200% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation-name:up,shine;animation-duration:.9s,6s;animation-iteration-count:1,2}
+@keyframes shine{to{background-position:200% 0}}
+.hero p.lead{max-width:46ch;margin:1.4rem 0 2rem;font-size:1.15rem;color:var(--mute);opacity:0;animation:up .9s .35s forwards}
+.hero .cta{display:flex;flex-wrap:wrap;gap:.8rem;opacity:0;animation:up .9s .5s forwards}
+@keyframes up{to{opacity:1;transform:none}}
+.scroll{position:absolute;bottom:1.5rem;left:50%;translate:-50% 0;width:26px;height:42px;border:1.5px solid var(--mute);border-radius:14px}
+.scroll::after{content:"";position:absolute;left:50%;top:8px;width:4px;height:8px;margin-left:-2px;border-radius:2px;background:var(--gold);animation:dot 1.8s 3 ease-in-out}
+@keyframes dot{50%{transform:translateY(12px);opacity:.3}}
+/* ===== 5. GALLERY ===== */
+.tools{display:grid;gap:1rem;margin:2rem 0 1.2rem}
+.search{position:relative}
+.search input{width:100%;min-height:54px;padding:0 3rem 0 1.2rem;border-radius:99px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);font:1rem var(--sans)}
+.search input:focus{border-color:var(--acc);outline:none;box-shadow:0 0 0 4px var(--acc2)}
+.search button{position:absolute;right:6px;top:6px;width:42px;height:42px;border:0;border-radius:50%;background:transparent;color:var(--mute);font-size:1.2rem;cursor:pointer}
+.row{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center}
+.chip{min-height:42px;padding:.4rem 1.1rem;border-radius:99px;border:1.5px solid var(--line);background:transparent;color:var(--ink);font:500 .92rem var(--sans);cursor:pointer;transition:background .25s,border-color .25s}
+.chip[aria-pressed=true]{background:var(--acc2);border-color:var(--acc);color:var(--acc);font-weight:700}
+.chip[aria-pressed=true]::before{content:"✓ "}
+select{min-height:42px;padding:0 .8rem;border-radius:12px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);font:500 .92rem var(--sans)}
+.count{color:var(--mute);margin-left:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,265px),1fr));gap:1.4rem;margin-top:1.4rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;position:relative;display:flex;flex-direction:column;opacity:0;transform:translateY(24px) scale(.98);transition:opacity .6s var(--d,0ms),transform .6s var(--d,0ms),box-shadow .3s}
+.card.in{opacity:1;transform:none}
+.card.in:hover,.card.in:focus-within{transform:translateY(-6px);box-shadow:var(--shadow);transition-delay:0ms}
+.card::after{content:"";position:absolute;inset:auto 0 0;height:3px;background:linear-gradient(90deg,var(--acc),var(--gold));transform:scaleX(0);transform-origin:left;transition:transform .45s}
+.card:hover::after,.card:focus-within::after{transform:scaleX(1)}
+.pic{aspect-ratio:4/3;position:relative;overflow:hidden;background:var(--bg2)}
+.ph,.pic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .7s}
+.ph{display:grid;place-items:center;font:700 clamp(3.4rem,10vw,4.6rem) var(--serif);color:#fff;background:linear-gradient(135deg,hsl(var(--h) 45% 32%),hsl(calc(var(--h) + 40) 50% 52%));text-shadow:0 2px 14px rgba(0,0,0,.3)}
+.card:hover .ph,.card:hover .pic img{transform:scale(1.07)}
+.pic::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(10,10,30,.55),transparent 55%);pointer-events:none}
+.tag{position:absolute;left:12px;bottom:10px;z-index:2;color:#fff;font:500 .82rem var(--sans)}
+.fav{position:absolute;right:10px;top:10px;z-index:3;width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,250,240,.92);color:#7a2a4a;font-size:1.25rem;cursor:pointer}
+.body{padding:1.1rem 1.2rem 1.3rem;display:flex;flex-direction:column;gap:.5rem;flex:1}
+.body h3{font-size:1.6rem}
+.yrs{color:var(--gold);font-weight:700;font-size:.92rem}
+.body p{color:var(--mute);font-size:.95rem}
+.spec{font-style:italic;font-family:var(--serif);font-size:1.15rem;color:var(--ink)}
+.body .btn{margin-top:auto;align-self:flex-start;padding:.5rem 1.1rem;min-height:42px}
+.empty{grid-column:1/-1;text-align:center;padding:4rem 1rem;border:1.5px dashed var(--line);border-radius:var(--r)}
+.empty b{font:700 4rem var(--serif);color:var(--gold);display:block;line-height:1}
+/* ===== 6. QUOTE + TIMELINE + MODAL ===== */
+.corner{background:var(--bg2);text-align:center}
+.q{max-width:760px;margin:auto;transition:opacity .35s,transform .35s}
+.q.out{opacity:0;transform:translateY(10px)}
+.q blockquote{font:500 clamp(1.5rem,4vw,2.4rem)/1.45 var(--serif);position:relative;padding-top:3rem}
+.q blockquote::before{content:"“";position:absolute;left:50%;top:-1.2rem;translate:-50% 0;font:700 7rem/1 var(--serif);color:var(--gold);opacity:.6}
+.q cite{display:block;margin-top:1rem;font-style:normal;font-weight:700}
+.q small{display:block;color:var(--mute)}
+.q .row{justify-content:center;margin-top:1.6rem}
+.tl{display:flex;gap:0;overflow-x:auto;padding:2.2rem 0 1rem;border-top:0;position:relative;scroll-snap-type:x proximity}
+.tl::before{content:"";position:absolute;left:0;right:0;top:2.55rem;height:1px;background:var(--gold)}
+.tl button{flex:0 0 auto;min-width:130px;background:none;border:0;color:var(--ink);cursor:pointer;text-align:center;font:inherit;scroll-snap-align:start;padding:0 .6rem 0}
+.tl button::before{content:"";display:block;width:11px;height:11px;margin:0 auto .8rem;border-radius:50%;background:var(--bg);border:2px solid var(--acc);position:relative;transition:transform .25s}
+.tl button:hover::before{transform:scale(1.5)}
+.tl b{display:block;font:700 1.05rem var(--serif)}.tl span{font-size:.82rem;color:var(--mute)}
+dialog{border:1px solid var(--line);border-radius:22px;padding:0;width:min(880px,calc(100% - 1.2rem));max-height:92vh;background:var(--card);color:var(--ink);box-shadow:0 30px 80px rgba(0,0,0,.45);opacity:0;transform:translateY(24px) scale(.97);transition:opacity .3s,transform .3s,overlay .3s allow-discrete,display .3s allow-discrete}
+dialog[open]{opacity:1;transform:none}
+@starting-style{dialog[open]{opacity:0;transform:translateY(24px) scale(.97)}}
+dialog::backdrop{background:rgba(10,10,28,.6);backdrop-filter:blur(4px)}
+.m{display:grid;grid-template-columns:1fr;max-height:92vh;overflow-y:auto}
+.m .pic{aspect-ratio:16/9}
+.m .txt{padding:1.4rem 1.5rem 2rem;display:grid;gap:1rem}
+.m h2{font-size:clamp(2rem,6vw,3rem)}
+.m h4{font:700 .95rem var(--sans);color:var(--gold);margin-bottom:.2rem}
+.m ul{padding-left:1.1rem}
+.m .quote{border-left:3px solid var(--gold);padding:.3rem 0 .3rem 1rem;font:500 1.35rem/1.5 var(--serif)}
+.m .quote small{display:block;font:400 .85rem var(--sans);color:var(--mute)}
+.close{position:absolute;right:12px;top:12px;z-index:5;background:rgba(255,250,240,.95);color:#1c1b33}
+footer{padding:3rem 0 2rem;border-top:1px solid var(--line);color:var(--mute);font-size:.92rem}
+footer .wrap{display:grid;gap:1.5rem;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+footer a{display:block}
+#top{position:fixed;right:16px;bottom:16px;z-index:40;opacity:0;pointer-events:none;transition:opacity .3s}
+#top.show{opacity:1;pointer-events:auto}
+#toast{position:fixed;left:50%;bottom:24px;translate:-50% 0;background:var(--ink);color:var(--bg);padding:.6rem 1.2rem;border-radius:99px;z-index:90;opacity:0;pointer-events:none;transition:opacity .3s}
+#toast.show{opacity:1}
+.f{display:grid;gap:.8rem;padding:1.6rem}.f label{display:grid;gap:.25rem;font-weight:500}.f input:not([type=file]),.f textarea,.f select{width:100%;padding:.6rem .8rem;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font:1rem var(--sans)}.f .two{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}#addDlg{overflow-y:auto}
+/* ===== 7. RESPONSIVE ===== */
+@media(min-width:760px){.m{grid-template-columns:.85fr 1.15fr}.m .pic{aspect-ratio:auto;min-height:100%}}
+@media(max-width:760px){
+#menuBtn{display:inline-block}
+.links{position:fixed;inset:64px 0 auto;flex-direction:column;padding:1.2rem;background:var(--bg);border-bottom:1px solid var(--line);transform:translateY(-130%);transition:transform .35s;align-items:stretch;text-align:center}
+.links.open{transform:none}
+.count{margin-left:0;width:100%}
+}
+/* ===== 8. REDUCED MOTION ===== */
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+.rv,.card,.hero h1 span,.hero p.lead,.hero .cta{opacity:1!important;transform:none!important}}
+</style>
+</head>
+<body>
+<a href="#gallery" class="btn" style="position:absolute;left:-999px" onfocus="this.style.left='8px'" onblur="this.style.left='-999px'">Skip to gallery</a>
+<header class="nav" id="nav"><div class="wrap">
+<a class="logo" href="#top-of-page" aria-label="Poets Gallery home"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 26c4-1 8-5 12-11s7-9 9-9c0 3-3 8-8 13s-9 6-13 7zM11 21l9-9"/></svg>Poets Gallery</a>
+<nav aria-label="Main"><div class="links" id="links">
+<a href="#gallery">Poets</a><a href="#corner">Words That Stay</a><a href="#timeline">Timeline</a>
+<button class="ico" id="theme" aria-label="Switch to dark theme" title="Toggle theme">☾</button><button class="chip" id="outBtn" hidden>Sign out</button></div></nav>
+<button class="ico" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="links">☰</button>
+</div></header>
+
+<main id="top-of-page">
+<section class="hero" aria-labelledby="h1"><div class="bigq" aria-hidden="true">“</div><div class="orb o1" data-px="0.06"></div><div class="orb o2" data-px="-0.04"></div>
+<div class="wrap"><h1 id="h1"><span>Words That</span><span>Live Forever.</span></h1>
+<p class="lead">Twelve poets, three continents, eight centuries. Walk through a quiet museum of verse, from Shakespeare’s stage to Tagore’s Bengal and Bharati’s fire.</p>
+<div class="cta"><a class="btn" href="#gallery">Explore the Poets <span class="ar">→</span></a><a class="btn ghost" href="#corner">Discover Their Words</a></div></div>
+<div class="scroll" aria-hidden="true"></div></section>
+
+<section id="gallery" aria-labelledby="gt"><div class="wrap">
+<div class="rv"><h2 id="gt">The Gallery</h2><hr class="rule" style="margin-left:0"></div>
+<div class="tools">
+<div class="search"><label for="q" class="sr" style="position:absolute;left:-999px">Search poets</label>
+<input id="q" type="search" placeholder="Search by name, country, work or theme…" autocomplete="off"><button id="clr" aria-label="Clear search" hidden>×</button></div>
+<div class="row" role="group" aria-label="Filter by tradition" id="cats"></div>
+<div class="row"><label for="era" style="font-weight:500">Era</label><select id="era"><option value="all">Any period</option><option value="a">Born before 1800</option><option value="b">Born 1800–1899</option><option value="c">Born 1900 or later</option></select>
+<label for="sort" style="font-weight:500">Sort</label><select id="sort"><option value="az">Name A–Z</option><option value="za">Name Z–A</option><option value="old">Oldest first</option></select>
+<button class="chip" id="addBtn">＋ Add a poet</button><button class="chip" id="expBtn">Backup</button><button class="chip" id="impBtn">Restore</button><input type="file" id="impIn" accept="application/json,.json" hidden>
+<span class="count" id="count" role="status" aria-live="polite"></span></div></div>
+<div class="grid" id="grid"></div></div></section>
+
+<section class="corner" id="corner" aria-labelledby="ct"><div class="wrap rv">
+<h2 id="ct">Words That Stay</h2><hr class="rule">
+<div class="q" id="qbox"></div>
+<div class="row"><button class="btn" id="next">Discover Another Quote</button><button class="btn ghost" id="copy">Copy quote</button><button class="btn ghost" id="qpoet">View poet</button></div></div></section>
+
+<section id="timeline" aria-labelledby="tt"><div class="wrap rv"><h2 id="tt">A Timeline of Voices</h2><hr class="rule" style="margin-left:0">
+<p style="color:var(--mute)">Ordered by birth year. Select a poet to open their page.</p><div class="tl" id="tl"></div></div></section>
+</main>
+
+<footer><div class="wrap">
+<div><b class="logo" style="font-size:1.3rem">Poets Gallery</b><p>Where words become immortal. A small, free, ad-free tribute to poetry.</p></div>
+<div><b>Explore</b><a href="#gallery">The poets</a><a href="#corner">Words That Stay</a><a href="#timeline">Timeline</a><a href="#top-of-page">Back to top ↑</a></div>
+<div><b>Attribution</b><p>Quotations are short public-domain excerpts or clearly marked paraphrases. Portraits are illustrative monograms unless you add licensed images (see guide).</p></div>
+</div></footer>
+<button class="ico" id="top" aria-label="Back to top">↑</button>
+<div id="toast" role="status"></div>
+<dialog id="addDlg" aria-labelledby="addT"><button class="ico close" type="button" id="addX" aria-label="Close form">×</button>
+<form class="f" id="addForm"><h2 id="addT">Add a poet</h2>
+<label>Full name *<input name="name" required maxlength="80"></label>
+<div class="two"><label>Born (year) *<input name="b" type="number" required min="-1000" max="2100"></label><label>Died (blank if living)<input name="d" type="number" min="-1000" max="2100"></label></div>
+<label>Country or tradition *<input name="country" required maxlength="60"></label>
+<label>Category<select name="cat"><option value="in">Indian poetry</option><option value="en">English-language poetry</option><option value="wd">World poetry</option></select></label>
+<label>Known for<input name="spec" maxlength="80"></label>
+<label>Short biography *<textarea name="bio" required rows="3" maxlength="600"></textarea></label>
+<label>Why they matter<textarea name="sig" rows="2" maxlength="400"></textarea></label>
+<label>Notable works (separate with commas)<input name="works"></label>
+<label>Quotation (public domain, or your own summary)<textarea name="qt" rows="2" maxlength="300"></textarea></label>
+<label>Quotation source<input name="qs" maxlength="120"></label>
+<label>Portrait image (JPG, PNG or WebP)<input type="file" id="imgIn" accept="image/*"></label>
+<p id="saveNote" style="color:var(--mute);font-size:.88rem">Saved in this browser only. Use Backup to keep a copy. Only add images you have the right to use.</p>
+<button class="btn" type="submit">Save poet</button></form></dialog>
+<dialog id="dlg" aria-labelledby="dname"><button class="ico close" id="x" aria-label="Close poet details">×</button><div class="m" id="mbody"></div></dialog>
+
+<script>
+/* ===== 9. POET DATA =====
+ cat: in = Indian, en = English-language, wd = World. img: optional URL or local path (e.g. "img/tagore.jpg").
+ quote: null when no verified public-domain line is included; "para" is then my plain-language summary, not a quotation. */
+const BASE=[
+{id:"shakespeare",name:"William Shakespeare",b:1564,d:1616,country:"England",cat:"en",h:20,spec:"Sonnets, tragedy and the English language itself",bio:"Born in Stratford-upon-Avon, Shakespeare became the foremost playwright and poet of the English Renaissance.",sig:"His 154 sonnets and plays such as Hamlet and Macbeth shaped English drama, vocabulary and the idea of poetic character.",works:["Sonnets (1609)","Hamlet","Macbeth","Venus and Adonis"],quote:{t:"All the world’s a stage, And all the men and women merely players.",src:"As You Like It, Act 2, Scene 7"},note:"Life as a performance, with each person playing several parts.",rel:["keats","wordsworth"]},
+{id:"wordsworth",name:"William Wordsworth",b:1770,d:1850,country:"England",cat:"en",h:130,spec:"Nature, memory and the Romantic movement",bio:"A Lake District poet who helped launch English Romanticism and became Poet Laureate in 1843.",sig:"Lyrical Ballads (1798), written with Coleridge, made everyday language and landscape serious poetic subjects.",works:["Lyrical Ballads (1798)","The Prelude","Tintern Abbey"],quote:{t:"I wandered lonely as a cloud That floats on high o’er vales and hills",src:"“I Wandered Lonely as a Cloud” (1807)"},note:"A solitary walk that turns into lasting joy through memory.",rel:["keats","frost"]},
+{id:"keats",name:"John Keats",b:1795,d:1821,country:"England",cat:"en",h:290,spec:"Sensuous odes and the beauty of fleeting things",bio:"A London-born Romantic who died of tuberculosis in Rome at 25, after only a few years of writing.",sig:"His 1819 odes are among the most admired short poems in English.",works:["Ode to a Nightingale","Ode on a Grecian Urn","To Autumn","Endymion"],quote:{t:"A thing of beauty is a joy for ever",src:"Endymion (1818), Book I"},note:"Beauty keeps its worth after the moment passes.",rel:["wordsworth","shakespeare"]},
+{id:"dickinson",name:"Emily Dickinson",b:1830,d:1886,country:"United States",cat:"en",h:330,spec:"Compressed, startling verse from a private life",bio:"A reclusive poet from Amherst, Massachusetts, who wrote nearly 1,800 poems, only a handful published in her lifetime.",sig:"Her dashes, slant rhyme and bold ideas made her a founder of modern American poetry.",works:["“Because I could not stop for Death”","“Hope” is the thing with feathers","“I’m Nobody! Who are you?”"],quote:{t:"“Hope” is the thing with feathers — That perches in the soul —",src:"Poem 314 (Franklin numbering), first published 1891"},note:"Hope is imagined as a small bird that never asks for anything.",rel:["frost","angelou"]},
+{id:"tagore",name:"Rabindranath Tagore",b:1861,d:1941,country:"India (Bengal)",cat:"in",h:255,spec:"Gitanjali, song and a universal humanism",bio:"Poet, composer and painter from Calcutta who wrote in Bengali and reshaped its literature.",sig:"In 1913 he became the first non-European to win the Nobel Prize in Literature. He wrote the words of India’s national anthem.",works:["Gitanjali","Gora","Jana Gana Mana","Amar Shonar Bangla"],quote:{t:"Where the mind is without fear and the head is held high",src:"Gitanjali (1912), poem 35, Tagore’s own English version"},note:"A prayer for a free, fearless and knowledge-loving country.",rel:["bharati","rumi"]},
+{id:"bharati",name:"Subramania Bharati",b:1882,d:1921,country:"India (Tamil Nadu)",cat:"in",h:10,spec:"Patriotic fire and modern Tamil verse",bio:"Tamil poet, journalist and freedom-movement voice, honoured as “Mahakavi”.",sig:"He brought simple spoken Tamil into poetry and wrote on freedom, women’s equality and social reform.",works:["Kannan Pattu","Panchali Sapatham","Kuyil Pattu","Desiya Geethangal"],quote:{t:"அச்சமில்லை அச்சமில்லை அச்சமென்பதில்லையே",src:"Bharati’s patriotic song, Tamil"},note:"Plain gloss: “There is no fear.” (my paraphrase, not a published translation)",rel:["tagore","vallathol"]},
+{id:"asan",name:"Kumaran Asan",b:1873,d:1924,country:"India (Kerala)",cat:"in",h:170,spec:"Malayalam Romanticism with a social conscience",bio:"Disciple of Sree Narayana Guru and one of the three great poets of modern Malayalam.",sig:"He used poetry to question caste and to explore love, renunciation and impermanence.",works:["Veena Poovu (1907)","Nalini","Leela","Duravastha","Chandala Bhikshuki"],quote:null,para:"Veena Poovu (The Fallen Flower) follows a flower’s fall to reflect on the passing of beauty and life. (summary, not a quotation)",rel:["vallathol","tagore"]},
+{id:"vallathol",name:"Vallathol Narayana Menon",b:1878,d:1958,country:"India (Kerala)",cat:"in",h:30,spec:"Malayalam nationalism and the arts",bio:"Mahakavi of Malayalam who translated the Valmiki Ramayana and wrote on patriotism and devotion.",sig:"In 1930 he co-founded Kerala Kalamandalam, a centre that revived Kerala’s classical performing arts.",works:["Chitrayogam","Magdalana Mariyam","Bandhanasthanaya Aniruddhan"],quote:null,para:"Much of his poetry links love of country with devotion to the arts. (summary, not a quotation)",rel:["asan","bharati"]},
+{id:"frost",name:"Robert Frost",b:1874,d:1963,country:"United States",cat:"en",h:150,spec:"Plain speech, New England and hidden depths",bio:"American poet known for rural New England settings and conversational rhythms.",sig:"He won four Pulitzer Prizes for Poetry.",works:["North of Boston","Mountain Interval","“Stopping by Woods on a Snowy Evening”"],quote:{t:"Two roads diverged in a yellow wood, And sorry I could not travel both",src:"“The Road Not Taken,” Mountain Interval (1916)"},note:"A choice, and the way people retell their choices afterwards.",rel:["dickinson","wordsworth"]},
+{id:"angelou",name:"Maya Angelou",b:1928,d:2014,country:"United States",cat:"en",h:350,spec:"Resilience, memory and the Black American voice",bio:"Poet, memoirist and civil-rights activist whose work spans memoir, essays and verse.",sig:"She read “On the Pulse of Morning” at the 1993 presidential inauguration.",works:["I Know Why the Caged Bird Sings","And Still I Rise","Phenomenal Woman"],quote:null,para:"“Still I Rise” is a defiant poem of dignity in the face of oppression. Her poems remain under copyright, so read them from a licensed source. (summary)",rel:["dickinson","neruda"]},
+{id:"rumi",name:"Rumi (Jalal al-Din Rumi)",b:1207,d:1273,country:"Persia / Anatolia",cat:"wd",h:45,spec:"Mystic love poetry in Persian",bio:"Persian poet and Sufi scholar born near Balkh who settled in Konya, now in Turkey.",sig:"His Masnavi and Divan-e Shams are central works of Persian literature, and his name is now known worldwide.",works:["Masnavi","Divan-e Shams-e Tabrizi","Fihi Ma Fihi"],quote:null,para:"The Masnavi opens with a reed flute crying out as it longs to return to its source, a picture of the soul’s longing for God. (summary; translations vary, so check the translator’s edition)",rel:["tagore","neruda"]},
+{id:"neruda",name:"Pablo Neruda",b:1904,d:1973,country:"Chile",cat:"wd",h:5,spec:"Love, politics and the sea in Spanish",bio:"Chilean poet and diplomat who published widely from his teens.",sig:"He received the Nobel Prize in Literature in 1971.",works:["Veinte poemas de amor y una canción desesperada (1924)","Canto General","Residencia en la tierra"],quote:{t:"Puedo escribir los versos más tristes esta noche.",src:"Poema 20, Veinte poemas de amor (1924)"},note:"My plain translation: “Tonight I can write the saddest lines.”",rel:["rumi","angelou"]}
+];
+/* poets added through the website live in this browser's localStorage */
+let POETS=[...BASE,...(()=>{try{return JSON.parse(localStorage.getItem("pg-custom"))||[]}catch{return[]}})()];
+const CATS=[["all","All poets"],["in","Indian poetry"],["en","English-language"],["wd","World poetry"],["fav","Favourites"]];
+const CATNAME={in:"Indian poetry",en:"English-language poetry",wd:"World poetry"};
+const $=s=>document.querySelector(s);
+/* ===== 12. UTILITIES ===== */
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const store={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}}};
+const favs=new Set(store.get("pg-favs",[]));
+const state={q:"",cat:"all",era:"all",sort:"az"};
+const yrs=p=>`${p.b}–${p.d||"present"}`;
+const byId=id=>POETS.find(p=>p.id===id);
+function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove("show"),2200)}
+const pic=(p,eager)=>`<div class="pic"><div class="ph" style="--h:${p.h}" aria-hidden="true">${esc(p.name.split(" ").filter(w=>/^[A-Z]/.test(w)).map(w=>w[0]).slice(0,2).join(""))}</div>${p.img?`<img src="${esc(p.img)}" alt="Portrait of ${esc(p.name)}" width="400" height="300" ${eager?"":'loading="lazy"'}>`:""}</div>`;
+/* ===== 10. RENDER + SEARCH ===== */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}}),{threshold:.12});
+function visible(){
+const q=state.q.trim().toLowerCase();
+let r=POETS.filter(p=>{
+if(state.cat==="fav"?!favs.has(p.id):(state.cat!=="all"&&p.cat!==state.cat))return false;
+if(state.era==="a"&&p.b>=1800||state.era==="b"&&(p.b<1800||p.b>=1900)||state.era==="c"&&p.b<1900)return false;
+if(!q)return true;
+return [p.name,p.country,CATNAME[p.cat],p.spec,p.bio,p.sig,p.works.join(" "),p.b,p.d].join(" ").toLowerCase().includes(q)});
+r.sort((a,b)=>state.sort==="old"?a.b-b.b:state.sort==="za"?b.name.localeCompare(a.name):a.name.localeCompare(b.name));
+return r}
+function render(){
+const r=visible(),g=$("#grid");
+$("#count").textContent=`${r.length} of ${POETS.length} poets`;
+$("#clr").hidden=!state.q;
+g.innerHTML=r.length?r.map((p,i)=>`<article class="card" style="--d:${(i%4)*70}ms">${pic(p)}
+<span class="tag">${esc(p.country)}</span>
+<button class="fav" data-fav="${p.id}" aria-pressed="${favs.has(p.id)}" aria-label="${favs.has(p.id)?"Remove":"Add"} ${esc(p.name)} ${favs.has(p.id)?"from":"to"} favourites">${favs.has(p.id)?"♥":"♡"}</button>
+<div class="body"><h3>${esc(p.name)}</h3><div class="yrs">${yrs(p)}</div><div class="spec">${esc(p.spec)}</div><p>${esc(p.bio)}</p>
+<button class="btn" data-open="${p.id}">Explore Poet <span class="ar" aria-hidden="true">→</span></button></div></article>`).join("")
+:`<div class="empty"><b>“ ”</b><h3>No poets match${state.cat==="fav"&&!favs.size?" — you have no favourites yet":""}</h3><p>${state.cat==="fav"&&!favs.size?"Tap the heart on any card to save it here.":"Try a different spelling, or clear the search and filters."}</p><button class="btn" id="reset" style="margin-top:1rem">Reset search and filters</button></div>`;
+g.querySelectorAll(".card").forEach(c=>io.observe(c))}
+function renderCats(){$("#cats").innerHTML=CATS.map(([k,l])=>`<button class="chip" data-cat="${k}" aria-pressed="${state.cat===k}">${l}</button>`).join("")}
+/* ===== 11. MODAL + QUOTES ===== */
+let lastFocus=null;
+function openPoet(id){
+const p=byId(id);if(!p)return;lastFocus=document.activeElement;
+$("#mbody").innerHTML=`${pic(p,true)}<div class="txt"><div><h2 id="dname">${esc(p.name)}</h2><div class="yrs">${yrs(p)} · ${esc(p.country)} · ${CATNAME[p.cat]}</div></div>
+<p>${esc(p.bio)}</p><div><h4>Why they matter</h4><p>${esc(p.sig)}</p></div>
+<div><h4>Notable works</h4><ul>${p.works.map(w=>`<li>${esc(w)}</li>`).join("")}</ul></div>
+${p.quote?`<div class="quote">${esc(p.quote.t)}<small>${esc(p.quote.src)}</small><small>${esc(p.note)}</small></div>`:p.para?`<div class="quote" style="font-size:1.1rem">${esc(p.para)}</div>`:""}
+<div ${p.rel.length?"":"hidden"}><h4>Related voices</h4><div class="row">${p.rel.map(r=>`<button class="chip" data-open="${r}">${esc(byId(r).name)}</button>`).join("")}</div></div>
+<div class="row"><button class="btn ghost" data-fav="${p.id}" aria-pressed="${favs.has(p.id)}">${favs.has(p.id)?"♥ Favourited":"♡ Add to favourites"}</button>${p.custom&&(!SHARED||p.canDel)?`<button class="btn ghost" data-del="${p.id}">Delete this poet</button>`:""}</div></div>`;
+$("#mbody").scrollTop=0;
+if(!$("#dlg").open)$("#dlg").showModal()}
+function closeDlg(){$("#dlg").close()}
+let qi=-1,cur=null;
+function showQuote(first){
+const box=$("#qbox"),swap=()=>{const quotable=POETS.filter(p=>p.quote);let n;do{n=Math.floor(Math.random()*quotable.length)}while(n===qi&&quotable.length>1);qi=n;cur=quotable[n];
+box.innerHTML=`<blockquote>${esc(cur.quote.t)}</blockquote><cite>${esc(cur.name)}</cite><small>${esc(cur.quote.src)}</small><small>${esc(cur.note)}</small>`;box.classList.remove("out")};
+if(first)return swap();box.classList.add("out");setTimeout(swap,300)}
+async function copyQuote(){
+if(!cur)return;const text=`“${cur.quote.t}” — ${cur.name}, ${cur.quote.src}`;
+try{await navigator.clipboard.writeText(text);toast("Quote copied")}
+catch{try{const a=document.createElement("textarea");a.value=text;a.style.position="fixed";document.body.append(a);a.select();const ok=document.execCommand("copy");a.remove();toast(ok?"Quote copied":"Copy failed. Select the text and copy it manually.")}catch{toast("Copy failed. Select the text and copy it manually.")}}}
+function toggleFav(id){favs.has(id)?favs.delete(id):favs.add(id);store.set("pg-favs",[...favs]);render();
+const d=$("#dlg");if(d.open){const b=d.querySelector("[data-fav]");b.setAttribute("aria-pressed",favs.has(id));b.textContent=favs.has(id)?"♥ Favourited":"♡ Add to favourites"}}
+function setTheme(t){document.documentElement.dataset.theme=t;const b=$("#theme");b.textContent=t==="dark"?"☀":"☾";b.setAttribute("aria-label",t==="dark"?"Switch to light theme":"Switch to dark theme");store.set("pg-theme",t)}
+/* ===== 13. INIT ===== */
+document.addEventListener("click",e=>{
+const t=e.target.closest("[data-open],[data-fav],[data-cat],[data-del],#reset");if(!t)return;
+if(t.dataset.del)delPoet(t.dataset.del);
+else if(t.dataset.open)openPoet(t.dataset.open);
+else if(t.dataset.fav)toggleFav(t.dataset.fav);
+else if(t.dataset.cat){state.cat=t.dataset.cat;renderCats();render()}
+else if(t.id==="reset"){Object.assign(state,{q:"",cat:"all",era:"all"});$("#q").value="";$("#era").value="all";renderCats();render()}});
+$("#q").addEventListener("input",e=>{state.q=e.target.value;render()});
+$("#clr").addEventListener("click",()=>{state.q="";$("#q").value="";$("#q").focus();render()});
+$("#era").addEventListener("change",e=>{state.era=e.target.value;render()});
+$("#sort").addEventListener("change",e=>{state.sort=e.target.value;render()});
+$("#next").addEventListener("click",()=>showQuote());
+$("#copy").addEventListener("click",copyQuote);
+$("#qpoet").addEventListener("click",()=>cur&&openPoet(cur.id));
+$("#x").addEventListener("click",closeDlg);
+$("#dlg").addEventListener("click",e=>{if(e.target===e.currentTarget)closeDlg()});
+$("#dlg").addEventListener("close",()=>{if(lastFocus&&document.contains(lastFocus))lastFocus.focus()});
+$("#theme").addEventListener("click",()=>setTheme(document.documentElement.dataset.theme==="dark"?"light":"dark"));
+$("#menuBtn").addEventListener("click",()=>{const o=$("#links").classList.toggle("open");$("#menuBtn").setAttribute("aria-expanded",o);$("#menuBtn").textContent=o?"×":"☰"});
+$("#links").addEventListener("click",e=>{if(e.target.closest("a")){$("#links").classList.remove("open");$("#menuBtn").setAttribute("aria-expanded","false");$("#menuBtn").textContent="☰"}});
+$("#top").addEventListener("click",()=>scrollTo({top:0}));
+/* ===== ADD / DELETE / BACKUP POETS (stored in this browser) ===== */
+const custom=()=>POETS.filter(p=>p.custom);
+function saveCustom(list){try{localStorage.setItem("pg-custom",JSON.stringify(list))}catch{toast("Browser storage is full or blocked. Use a smaller image or delete a poet.");return false}POETS=[...BASE,...list];return true}
+function refresh(m){renderTl();render();if(m)toast(m)}
+function shrink(file,asBlob){return new Promise((res,rej)=>{const r=new FileReader();r.onerror=()=>rej();r.onload=()=>{const i=new Image();i.onerror=()=>rej();i.onload=()=>{const s=Math.min(1,700/i.width),c=document.createElement("canvas");c.width=Math.round(i.width*s);c.height=Math.round(i.height*s);c.getContext("2d").drawImage(i,0,0,c.width,c.height);asBlob?c.toBlob(b=>b?res(b):rej(),"image/jpeg",.82):res(c.toDataURL("image/jpeg",.82))};i.src=r.result};r.readAsDataURL(file)})}
+/* SHARED MODE: on the claude.ai page, poets live in a shared database and images in asset storage, so every visitor sees them. Editors add and delete. Opened as a plain file, this stays off and the browser-only mode above is used. */
+let SHARED=false,BACK=null;
+function startShared(back,isOwner){SHARED=true;BACK=back;
+$("#addBtn").hidden=!isOwner;$("#expBtn").hidden=true;$("#impBtn").hidden=true;
+$("#saveNote").textContent="Saved for all signed-in visitors. Only add images you have the right to use.";
+POETS=[...BASE];refresh();
+return list=>{POETS=[...BASE,...list.map(p=>({...p,custom:true,canDel:isOwner}))];renderTl();render()}}
+function delPoet(id){if(delPoet.id!==id){delPoet.id=id;toast("Click Delete again to confirm");return}delPoet.id=null;favs.delete(id);store.set("pg-favs",[...favs]);if(SHARED){BACK.del(id).then(()=>{closeDlg();toast("Poet deleted")},()=>toast("Could not delete"));return}
+if(saveCustom(custom().filter(p=>p.id!==id))){closeDlg();refresh("Poet deleted")}}
+$("#addBtn").addEventListener("click",()=>{lastFocus=$("#addBtn");$("#addDlg").showModal()});
+$("#addX").addEventListener("click",()=>$("#addDlg").close());
+$("#addDlg").addEventListener("click",e=>{if(e.target===e.currentTarget)e.currentTarget.close()});
+$("#addDlg").addEventListener("close",()=>{$("#addForm").reset();if(lastFocus&&document.contains(lastFocus))lastFocus.focus()});
+$("#addForm").addEventListener("submit",async e=>{e.preventDefault();
+const f=new FormData(e.target),g=k=>(f.get(k)||"").toString().trim(),name=g("name");
+const p={id:"c-"+Date.now().toString(36),custom:true,name,b:+g("b"),d:g("d")?+g("d"):null,country:g("country"),cat:g("cat"),h:[...name].reduce((a,c)=>a+c.charCodeAt(0),0)%360,spec:g("spec")||"Poet",bio:g("bio"),sig:g("sig")||g("bio"),works:g("works").split(",").map(s=>s.trim()).filter(Boolean),quote:g("qt")?{t:g("qt"),src:g("qs")||"Source not given"}:null,note:"",para:"",rel:[]};
+const file=$("#imgIn").files[0];
+if(SHARED){try{if(file){p.img=await shrink(file)}
+delete p.custom;delete p.id;await BACK.add(p);$("#addDlg").close();toast(name+" added for everyone")}catch{toast("Could not save. Only the owner can add poets.")}return}
+if(file){try{p.img=await shrink(file)}catch{toast("Could not read that image");return}}
+if(saveCustom([...custom(),p])){$("#addDlg").close();refresh(name+" added")}});
+$("#expBtn").addEventListener("click",()=>{if(!custom().length){toast("Add a poet first, then back up");return}const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(custom())],{type:"application/json"}));a.download="my-poets.json";document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)});
+$("#impBtn").addEventListener("click",()=>$("#impIn").click());
+$("#impIn").addEventListener("change",async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;
+try{const a=JSON.parse(await f.text());if(!Array.isArray(a))throw 0;
+const ok=a.filter(p=>p&&typeof p.name==="string"&&Number.isFinite(+p.b)).map(p=>({id:"c-"+Math.random().toString(36).slice(2,9),custom:true,name:String(p.name),b:+p.b,d:p.d?+p.d:null,country:String(p.country||""),cat:["in","en","wd"].includes(p.cat)?p.cat:"wd",h:+p.h||0,spec:String(p.spec||"Poet"),bio:String(p.bio||""),sig:String(p.sig||p.bio||""),works:Array.isArray(p.works)?p.works.map(String):[],quote:p.quote&&p.quote.t?{t:String(p.quote.t),src:String(p.quote.src||"")}:null,note:"",para:"",rel:[],img:typeof p.img==="string"?p.img:undefined}));
+if(!ok.length)throw 0;if(saveCustom([...custom(),...ok]))refresh(`Restored ${ok.length} poet(s)`)}catch{toast("That file is not a valid backup")}});
+/* broken images fall back to the monogram underneath */
+document.addEventListener("error",e=>{if(e.target.tagName==="IMG")e.target.remove()},true);
+/* scroll: nav background, back-to-top, light parallax on decorative orbs (rAF-throttled) */
+let tick=false;const orbs=[...document.querySelectorAll("[data-px]")],still=matchMedia("(prefers-reduced-motion:reduce)").matches;
+addEventListener("scroll",()=>{if(tick)return;tick=true;requestAnimationFrame(()=>{const y=scrollY;$("#nav").classList.toggle("solid",y>30);$("#top").classList.toggle("show",y>700);
+if(!still&&y<1000)orbs.forEach(o=>o.style.transform=`translateY(${y*o.dataset.px*-4}px)`);tick=false})},{passive:true});
+/* active nav link */
+const secs=["gallery","corner","timeline"].map(id=>document.getElementById(id));
+const navIO=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)document.querySelectorAll(".links a").forEach(a=>{a.getAttribute("href")==="#"+e.target.id?a.setAttribute("aria-current","true"):a.removeAttribute("aria-current")})}),{rootMargin:"-45% 0px -50% 0px"});
+secs.forEach(s=>navIO.observe(s));
+document.querySelectorAll(".rv").forEach(el=>io.observe(el));
+const renderTl=()=>$("#tl").innerHTML=[...POETS].sort((a,b)=>a.b-b.b).map(p=>`<button data-open="${p.id}"><b>${esc(p.name.split(" ").slice(-1)[0].replace(/[()]/g,""))}</b><span>${yrs(p)}</span></button>`).join("");
+setTheme(store.get("pg-theme",matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light"));
+renderTl();renderCats();render();showQuote(true);
+</script>
+<div id="gate"><div class="gcard"><h2>Poets Gallery</h2><p id="gmsg">Loading…</p>
+<form class="f" id="gform" autocomplete="on"><label>Email<input id="gmail" type="email" required autocomplete="email"></label><label>Password (6+ characters)<input id="gpass" type="password" required minlength="6" autocomplete="current-password"></label>
+<button class="btn" type="submit">Sign in</button><button class="btn ghost" type="button" id="gsign">Create account</button><button class="chip" type="button" id="greset">Forgot password</button></form>
+<div id="gverify" class="f" hidden><button class="btn" type="button" id="gdone">I have verified my email</button><button class="btn ghost" type="button" id="gresend">Send the email again</button><button class="chip" type="button" id="gout">Use a different account</button></div></div></div>
+<style>#gate{position:fixed;inset:0;z-index:300;display:grid;place-items:center;padding:1.2rem;background:var(--bg);overflow-y:auto}#gate[hidden]{display:none}.gcard{width:min(420px,100%);background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:1.6rem;box-shadow:var(--shadow)}.gcard p{color:var(--mute);margin:.6rem 0}.gcard .f{padding:0}</style>
+<script type="module">
+/* ===== SIGN-IN + SHARED DATABASE (Firebase, free Spark plan) ===== */
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,sendEmailVerification,sendPasswordResetEmail,signOut} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {getFirestore,collection,onSnapshot,addDoc,deleteDoc,doc} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+/* 1) Paste your Firebase web-app settings here (Firebase console > Project settings > Your apps). */
+const CONFIG={apiKey:"PASTE_API_KEY",authDomain:"PASTE_PROJECT.firebaseapp.com",projectId:"PASTE_PROJECT_ID",appId:"PASTE_APP_ID"};
+/* 2) Put the OWNER email here. Use the same email in firestore.rules. Only this account can add or delete poets. */
+const OWNER="gallerypoet@gmail.com";
+const g=id=>document.getElementById(id),say=t=>g("gmsg").textContent=t;
+const nice=e=>({"auth/invalid-credential":"Wrong email or password.","auth/email-already-in-use":"That email already has an account. Sign in instead.","auth/weak-password":"Use a password of at least 6 characters.","auth/invalid-email":"Enter a valid email address.","auth/too-many-requests":"Too many attempts. Wait a few minutes and try again."}[e.code]||"Something went wrong ("+(e.code||"unknown")+").");
+if(CONFIG.apiKey.startsWith("PASTE")){say("Setup needed: paste your Firebase settings into CONFIG at the bottom of this file.");g("gform").hidden=true}
+else{
+const auth=getAuth(initializeApp(CONFIG)),fs=getFirestore();let unsub=null;
+onAuthStateChanged(auth,async u=>{
+if(unsub){unsub();unsub=null}
+if(!u){g("gate").hidden=false;g("gform").hidden=false;g("gverify").hidden=true;g("outBtn").hidden=true;say("Sign in with your email to enter the gallery.");return}
+g("outBtn").hidden=false;
+if(!u.emailVerified){g("gate").hidden=false;g("gform").hidden=true;g("gverify").hidden=false;say("We sent a link to "+u.email+". Open it, then press the button below.");return}
+await u.getIdToken(true);g("gate").hidden=true;
+const owner=(u.email||"").toLowerCase()===OWNER.toLowerCase();
+const push=startShared({add:p=>addDoc(collection(fs,"poets"),JSON.parse(JSON.stringify(p))),del:id=>deleteDoc(doc(fs,"poets",id))},owner);
+unsub=onSnapshot(collection(fs,"poets"),s=>push(s.docs.map(d=>({...d.data(),id:d.id}))),()=>toast("Could not load poets"))});
+g("gform").addEventListener("submit",e=>{e.preventDefault();signInWithEmailAndPassword(auth,g("gmail").value.trim(),g("gpass").value).catch(x=>say(nice(x)))});
+g("gsign").addEventListener("click",async()=>{const m=g("gmail").value.trim(),p=g("gpass").value;if(!m||p.length<6){say("Enter your email and a password of 6+ characters first.");return}
+try{const c=await createUserWithEmailAndPassword(auth,m,p);await sendEmailVerification(c.user)}catch(x){say(nice(x))}});
+g("greset").addEventListener("click",()=>{const m=g("gmail").value.trim();if(!m){say("Type your email first.");return}sendPasswordResetEmail(auth,m).then(()=>say("Password reset email sent."),x=>say(nice(x)))});
+g("gdone").addEventListener("click",async()=>{await auth.currentUser.reload();auth.currentUser.emailVerified?location.reload():say("Not verified yet. Open the link in the email first.")});
+g("gresend").addEventListener("click",()=>sendEmailVerification(auth.currentUser).then(()=>say("Email sent again."),x=>say(nice(x))));
+g("gout").addEventListener("click",()=>signOut(auth));g("outBtn").addEventListener("click",()=>signOut(auth));
+}
+</script>
+</body>
+</html>
